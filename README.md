@@ -25,6 +25,12 @@ This project integrates the robot's built-in odometry with the LiDAR's 3D point 
 - `slam_toolbox`: `sudo apt install ros-humble-slam-toolbox`
 - `pointcloud_to_laserscan`: `sudo apt install ros-humble-pointcloud-to-laserscan`
 
+##Package Dependencies
+Make sure these packages are installed in the unitree workspace.
+- unitree_sdk2 (https://github.com/unitreerobotics/unitree_sdk2)
+- livox packages (https://github.com/Livox-SDK/livox_ros2_driver)
+- fast Lio packages (https://github.com/hku-mars/FAST_LIO/tree/ROS2)
+
 ## How to Run
 
 1.  Source the required workspaces (especially `ws_livox` for the LiDAR driver).
