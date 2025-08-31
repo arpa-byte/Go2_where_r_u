@@ -1,0 +1,18 @@
+# Colcon build artifacts
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Generated files
+*.so
+*.a
+
+# User-generated output files
+*.pgm
+*.yaml
+*.txt

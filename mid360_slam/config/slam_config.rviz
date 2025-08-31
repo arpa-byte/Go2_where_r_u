@@ -1,0 +1,110 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /TF1
+        - /Map1
+        - /LaserScan1
+      Splitter Ratio: 0.5
+    Tree Height: 350
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.7
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Value: /map
+      Use Topic QoS: false
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base_link:
+          Value: true
+        livox_frame:
+          Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
+      Marker Scale: 0.5
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        map:
+          odom:
+            base_link:
+              livox_frame: {}
+      Update Interval: 0
+    - Alpha: 1
+      Class: rviz_default_plugins/LaserScan
+      Color: 0, 255, 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Name: LaserScan
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Style: Points
+      Topic:
+        Value: /scan_reliable
+      Use Topic QoS: false
+  Enabled: true
+  Global Options:
+    Background Color: 48, 48, 48
+    Fixed Frame: map
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+      Line color: 128, 128, 0
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Value: /initialpose
+    - Class: rviz_default_plugins/PublishPoint
+      Single click: true
+      Topic:
+        Value: /clicked_point
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 15.0
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.06
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Name: Current View
+      Near Clip Distance: 0.01
+      Pitch: 0.65
+      Target Frame: base_link
+      Value: Orbit (rviz)
+      Yaw: 0
