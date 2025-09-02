@@ -2,6 +2,9 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription # <-- ADD THIS IMPORT
+from launch.launch_description_sources import PythonLaunchDescriptionSource # <-- AND THIS ONE
+
 
 def generate_launch_description():
     
@@ -10,6 +13,8 @@ def generate_launch_description():
     # your ws_livox workspace BEFORE launching this file.
     livox_ros_driver2_dir = get_package_share_directory('livox_ros_driver2')
     mid360_slam_dir = get_package_share_directory('mid360_slam')
+    go2_localization_dir = get_package_share_directory('go2_localization') # <-- ADD THIS LINE
+
 
     livox_config_file = os.path.join(livox_ros_driver2_dir, 'config', 'MID360_config.json')
     slam_params_file = os.path.join(mid360_slam_dir, 'config', 'slam_params.yaml')
@@ -29,6 +34,12 @@ def generate_launch_description():
         name='odom_bridge_node',
         output='screen',
         arguments=[network_interface] # Pass the network interface as a command-line argument
+    )
+
+    ekf_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(go2_localization_dir, 'launch', 'ekf.launch.py')
+        )
     )
 
     # Terminal 2: Livox LiDAR Driver
@@ -110,6 +121,7 @@ def generate_launch_description():
     # --- Launch Description ---
     return LaunchDescription([
         odom_bridge,
+        ekf_launch,
         livox_driver,
         pointcloud_to_laserscan,
         scan_qos_relay,

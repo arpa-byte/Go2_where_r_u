@@ -25,7 +25,7 @@ public:
   OdomBridgeNode(const std::string &iface)
   : Node("odom_bridge_node") {
     odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("/odom", 50);
-    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    //tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this); // Uncomment if TF broadcasting is needed
 
     // Initialize state [x, y, yaw] to zero.
     x_ = 0.0;
@@ -137,7 +137,10 @@ private:
 
     odom_pub_->publish(std::move(odom));
 
-    // --- Publish TF transform (odom -> base_link) ---
+    /* --- Publish TF transform (odom -> base_link) ---
+    
+    BLOCK COMMENTED OUT
+
     geometry_msgs::msg::TransformStamped t;
     t.header.stamp = now;
     t.header.frame_id = "odom";
@@ -146,7 +149,7 @@ private:
     t.transform.translation.y = y_;
     t.transform.translation.z = 0.0;
     t.transform.rotation = tf2::toMsg(q);
-    tf_broadcaster_->sendTransform(t);
+    tf_broadcaster_->sendTransform(t);*/
 
     last_time_ = now;
   }
@@ -157,7 +160,7 @@ private:
   }
 
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  //std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;   // Uncomment if TF broadcasting is needed
   std::shared_ptr<unitree::robot::ChannelSubscriber<unitree_go::msg::dds_::SportModeState_>> subscriber_;
 
   double x_, y_, yaw_;
