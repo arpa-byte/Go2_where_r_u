@@ -14,5 +14,4 @@ __pycache__/
 
 # User-generated output files
 *.pgm
-*.yaml
 *.txt

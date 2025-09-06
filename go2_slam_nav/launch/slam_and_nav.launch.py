@@ -1,10 +1,12 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch.event_handlers import OnProcessStart
+from launch.actions import TimerAction  # Import TimerAction for delaying actions
 
 def generate_launch_description():
     # --- GET PACKAGE DIRECTORIES ---
@@ -13,13 +15,12 @@ def generate_launch_description():
     go2_localization_dir = get_package_share_directory('go2_localization')
     go2_slam_nav_dir = get_package_share_directory('go2_slam_nav')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
-    slam_toolbox_dir = get_package_share_directory('slam_toolbox')
 
     # --- DEFINE FILE PATHS ---
     livox_config_file = os.path.join(livox_ros_driver2_dir, 'config', 'MID360_config.json')
     nav2_params_file = os.path.join(go2_slam_nav_dir, 'config', 'nav2_params.yaml')
     slam_params_file = os.path.join(mid360_slam_dir, 'config', 'slam_params.yaml')
-    rviz_config_file = os.path.join(mid360_slam_dir, 'config', 'slam_config.rviz') # Reusing the SLAM RViz config
+    rviz_config_file = os.path.join(mid360_slam_dir, 'config', 'slam_config.rviz')
 
     # --- DECLARE LAUNCH ARGUMENTS ---
     network_interface_arg = DeclareLaunchArgument(
@@ -30,8 +31,7 @@ def generate_launch_description():
 
     # ========== LAUNCH ACTION DEFINITIONS ==========
 
-    # ----- 1. ROBOT INTERFACE AND SENSORS (from slam.launch.py) -----
-    
+    # ----- 1. ROBOT INTERFACE AND SENSORS -----
     odom_bridge_node = Node(
         package='odom_bridge_mid',
         executable='odom_bridge_node_mid',
@@ -52,11 +52,8 @@ def generate_launch_description():
         name='livox_lidar_publisher',
         output='screen',
         parameters=[
-            {'publish_freq': 10.0},
-            {'xfer_format': 0},
-            {'multi_topic': 0},
-            {'data_src': 0},
-            {'user_config_path': livox_config_file},
+            {'publish_freq': 10.0}, {'xfer_format': 0}, {'multi_topic': 0},
+            {'data_src': 0}, {'user_config_path': livox_config_file},
             {'frame_id': 'livox_frame'}
         ]
     )
@@ -67,11 +64,10 @@ def generate_launch_description():
         name='pointcloud_to_laserscan',
         remappings=[('cloud_in', '/livox/lidar'), ('scan', '/scan')],
         parameters=[{
-            'target_frame': 'livox_frame',
-            'transform_tolerance': 0.5, 'min_height': -1.0, 'max_height': 1.5,
-            'angle_min': -3.14159, 'angle_max': 3.14159, 'angle_increment': 0.0087,
-            'scan_time': 0.1, 'range_min': 0.3, 'range_max': 40.0,
-            'use_inf': True, 'inf_epsilon': 1.0
+            'target_frame': 'livox_frame', 'transform_tolerance': 0.5,
+            'min_height': -1.0, 'max_height': 1.5, 'angle_min': -3.14159,
+            'angle_max': 3.14159, 'angle_increment': 0.0087, 'scan_time': 0.1,
+            'range_min': 0.3, 'range_max': 40.0, 'use_inf': True, 'inf_epsilon': 1.0
         }]
     )
     
@@ -90,17 +86,19 @@ def generate_launch_description():
     )
 
     # ----- 2. SLAM TOOLBOX -----
-    
-    slam_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(slam_toolbox_dir, 'launch', 'online_async_launch.py')
-        ),
-        launch_arguments={'slam_params_file': slam_params_file}.items()
+    # CORRECTED: We now launch the node directly with its executable, not the launch file.
+    # This makes it a valid target for the event handler.
+    slam_toolbox_node = Node(
+        package='slam_toolbox',
+        executable='async_slam_toolbox_node',
+        name='slam_toolbox',
+        parameters=[slam_params_file],
+        remappings=[('scan', '/scan_reliable')]
     )
 
     # ----- 3. NAVIGATION (NAV2) STACK -----
-    
-    nav2_launch = IncludeLaunchDescription(
+    # This action will be triggered after SLAM starts.
+    nav2_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(nav2_bringup_dir, 'launch', 'navigation_launch.py')
         ),
@@ -111,7 +109,6 @@ def generate_launch_description():
     )
 
     # ----- 4. VISUALIZATION (RVIZ) -----
-    
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -119,25 +116,33 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
         output='screen'
     )
+    
+# Delay Nav2 bringup by 5 seconds to allow SLAM Toolbox to initialize
+    delayed_nav2_bringup = TimerAction(
+        period=5.0,  # Delay in seconds
+        actions=[
+            nav2_bringup_launch
+        ]
+    )
+
+    # Update the event handler to trigger the delayed action
+    delay_nav2_after_slam_start = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=slam_toolbox_node,
+            on_start=[delayed_nav2_bringup],
+        )
+    )
 
     # --- ASSEMBLE THE FINAL LAUNCH DESCRIPTION ---
     return LaunchDescription([
         network_interface_arg,
-        
-        # Robot Interface & Sensors
         odom_bridge_node,
         ekf_launch,
         livox_driver_node,
         pointcloud_to_laserscan_node,
         scan_qos_relay_node,
         static_tf_pub_node,
-        
-        # SLAM
-        slam_launch,
-        
-        # Navigation
-        nav2_launch,
-        
-        # Visualization
-        rviz_node
+        slam_toolbox_node,
+        rviz_node,
+        delay_nav2_after_slam_start
     ])
