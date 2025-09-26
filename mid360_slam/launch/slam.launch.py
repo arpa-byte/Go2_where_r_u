@@ -26,14 +26,14 @@ def generate_launch_description():
 
     # --- Node Definitions ---
 
-    # Terminal 1: Odom Bridge - THE NEW, CRITICAL NODE
-    # This node connects to the robot, gets odometry data, and publishes the odom->base_link transform.
+    # Terminal 1: Odom Bridge - THE NEW, MODERN NODE
+    # This node subscribes to the native /lf/sportmodestate topic and publishes
+    # the odom->base_link transform without needing a network interface argument.
     odom_bridge = Node(
-        package='odom_bridge_mid',
-        executable='odom_bridge_node_mid',
-        name='odom_bridge_node',
-        output='screen',
-        arguments=[network_interface] # Pass the network interface as a command-line argument
+        package='go2_odometry_bridge',
+        executable='go2_odometry_bridge_node',
+        name='odom_bridge_node', # We can keep the node name the same for consistency
+        output='screen'
     )
 
     ekf_launch = IncludeLaunchDescription(
