@@ -1,9 +1,10 @@
-import os
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription  # Added IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource  # Added this import
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.actions import IncludeLaunchDescription # <-- ADD THIS IMPORT
-from launch.launch_description_sources import PythonLaunchDescriptionSource # <-- AND THIS ONE
+from ament_index_python.packages import get_package_share_directory
+import os
 
 
 def generate_launch_description():
@@ -21,8 +22,15 @@ def generate_launch_description():
     #rviz_config_file = os.path.join(livox_ros_driver2_dir, 'config', 'display_point_cloud_ROS2.rviz')
     rviz_config_file = os.path.join(mid360_slam_dir, 'config', 'slam_config.rviz')
 
-    # Define the network interface for the robot. Change 'eth0' if yours is different.
-    network_interface = 'enp7s0'
+    # --- Declare Launch Arguments ---
+    network_interface_arg = DeclareLaunchArgument(
+        'iface', 
+        default_value='enp7s0',
+        description='The network interface for Unitree SDK communication.'
+    )
+
+    # Use the launch argument instead of hardcoded value
+    network_interface = LaunchConfiguration('iface')
 
     # --- Node Definitions ---
 
