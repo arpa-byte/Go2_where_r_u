@@ -44,6 +44,17 @@ Make sure these packages are installed in the unitree workspace.
     ros2 launch mid360_slam slam.launch.py iface:=enp7s0
     ```
 
+## Fixed issues
+1.	navigation.launch.py entirely dependent on slam.launch.py	| fixed. both are independent now
+2.	map_server init issues. Map not loading on launch		| fixed. yaml_filename="" added in nav2_params under map_server
+
+
+## Current Issues
+1.	Timestamp mismatch
+2.	AMCL path planning - path visible on map but log says "No valid trajectory"
+3.	Robot not moving
+
+
 ## Package Info
 arpan@legion-y540-ubuntu:~/unitree2/mid360_nav_only_clone/src$ ll
 total 52
@@ -70,7 +81,7 @@ go2_slam_nav		| autonomous mapping | in progress 		| path planning issues
 go2_teleop		| bridge teleop test 				| obselete	
 mid360_slam		| mapping package				| successfully working 	| minor odom issues
 
-Running mid360_slam (for mapping
+Running mid360_slam (for mapping)
 
 source ~/.bashrc (to source livox packages and unitree_ros2 package setup.sh)
 source install/setup.bash

@@ -1,0 +1,21 @@
+slam_toolbox:
+  ros__parameters:
+
+    # === REQUIRED PARAMETERS ===
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan_reliable
+
+    # === Setting LiDARs minimum range ===
+    laser_scan_matcher:
+      range_min: 0.3  # Match this to your LiDAR's minimum range
+
+    # === GENERAL PARAMETERS ===
+    use_scan_time: true
+    use_sim_time: false
+    
+    # Increase tolerance to solve timing issues
+    transform_publish_period: 0.05
+    map_update_interval: 1.0
+    tf_buffer_duration: 30.0 # Give a large buffer for transforms
