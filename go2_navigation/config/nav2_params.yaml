@@ -1,46 +1,52 @@
 # Parameters for Nav2 on the Unitree Go2 in Localization Mode
 # This version explicitly defines and links the goal_checker to the controller.
 
-# Top-level namespaces for each Nav2 server
+# Map Server parameters
+map_server:
+  ros__parameters:
+    yaml_filename: ""  # Empty string to allow override by launch argument
+    use_sim_time: false
+    frame_id: map
+    topic_name: /map
+
+# Controller Server parameters
 controller_server:
   ros__parameters:
     use_sim_time: false
     controller_frequency: 20.0
     
-    # --- FIX PART 1: Explicitly load the goal checker plugin ---
-    # This tells the controller_server to create an instance of the SimpleGoalChecker.
+    # Explicitly load the goal checker plugin
     goal_checker_plugins: ["SimpleGoalChecker"]
 
-    # This lists the controller plugins to load.
+    # List of controller plugins to load
     plugins: ["FollowPath"]
 
-    # --- Parameters for the DWB Controller Plugin ---
+    # Parameters for the DWB Controller Plugin
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
-      
-      # --- FIX PART 2: Assign the loaded goal checker to this controller ---
       goal_checker: "SimpleGoalChecker"
-      
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      # Add other DWB parameters if needed...
       
-    # --- FIX PART 3: Provide the parameters for the goal checker plugin ---
+    # Parameters for the goal checker plugin
     SimpleGoalChecker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
       yaw_goal_tolerance: 0.25
       stateful: True # True is recommended for DWB
 
+# Planner Server parameters
 planner_server:
   ros__parameters:
     use_sim_time: false
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
+      use_final_approach_orientation: true
       tolerance: 0.5
       use_astar: false
       allow_unknown: true
       
+# Behavior Server parameters
 behavior_server:
   ros__parameters:
     use_sim_time: false
@@ -52,6 +58,7 @@ behavior_server:
     wait:
       plugin: "nav2_behaviors/Wait"
 
+# Behavior Tree Navigator parameters
 bt_navigator:
   ros__parameters:
     use_sim_time: false
@@ -59,6 +66,7 @@ bt_navigator:
     robot_base_frame: base_link
     odom_topic: /odometry/filtered
 
+# Local Costmap parameters
 local_costmap:
   ros__parameters:
     use_sim_time: false
@@ -84,6 +92,7 @@ local_costmap:
       cost_scaling_factor: 3.0
       inflation_radius: 0.35
 
+# Global Costmap parameters
 global_costmap:
   ros__parameters:
     use_sim_time: false
@@ -98,15 +107,16 @@ global_costmap:
       plugin: "nav2_costmap_2d::StaticLayer"
       map_subscribe_transient_local: true
     obstacle_layer:
-       plugin: "nav2_costmap_2d::ObstacleLayer"
-       enabled: true
-       observation_sources: scan
-       scan: {topic: /scan_reliable, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
+      plugin: "nav2_costmap_2d::ObstacleLayer"
+      enabled: true
+      observation_sources: scan
+      scan: {topic: /scan_reliable, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
     inflation_layer:
       plugin: "nav2_costmap_2d::InflationLayer"
       cost_scaling_factor: 3.0
       inflation_radius: 0.35
 
+# AMCL parameters
 amcl:
   ros__parameters:
     use_sim_time: false
