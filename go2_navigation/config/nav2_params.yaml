@@ -123,4 +123,8 @@ amcl:
     base_frame_id: "base_link"
     global_frame_id: "map"
     odom_frame_id: "odom"
+    # <<<--- CHANGE HERE: use the reliable scan topic
+    scan_topic: /scan_reliable
+    # <<<--- CHANGE HERE: give AMCL more time to find transforms
+    transform_tolerance: 1.0
     # Add other AMCL parameters as needed...
