@@ -17,7 +17,7 @@ public:
         odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 50);
 
         // TF broadcaster
-        tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+        //tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
         // Subscriber to Go2 state
         state_sub_ = this->create_subscription<unitree_go::msg::SportModeState>(
@@ -116,16 +116,16 @@ private:
         odom_pub_->publish(odom_msg);
 
         // === PUBLISH TF: odom -> base_link ===
-        geometry_msgs::msg::TransformStamped transform;
-        transform.header.stamp = current_time;
-        transform.header.frame_id = "odom";
-        transform.child_frame_id = "base_link";
-        transform.transform.translation.x = x_;
-        transform.transform.translation.y = y_;
-        transform.transform.translation.z = 0.0;
-        transform.transform.rotation = odom_msg.pose.pose.orientation;
+        // geometry_msgs::msg::TransformStamped transform;
+        // transform.header.stamp = current_time;
+        // transform.header.frame_id = "odom";
+        // transform.child_frame_id = "base_link";
+        // transform.transform.translation.x = x_;
+        // transform.transform.translation.y = y_;
+        // transform.transform.translation.z = 0.0;
+        // transform.transform.rotation = odom_msg.pose.pose.orientation;
 
-        tf_broadcaster_->sendTransform(transform);
+        // tf_broadcaster_->sendTransform(transform);
 
         last_time_ = current_time;
     }

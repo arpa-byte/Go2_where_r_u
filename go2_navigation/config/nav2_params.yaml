@@ -89,8 +89,8 @@ local_costmap:
       scan: {topic: /scan_reliable, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
     inflation_layer:
       plugin: "nav2_costmap_2d::InflationLayer"
-      cost_scaling_factor: 3.0
-      inflation_radius: 0.35
+      cost_scaling_factor: 15.0     # ← SHARPER drop-off
+      inflation_radius: 0.01
 
 # Global Costmap parameters
 global_costmap:
@@ -113,8 +113,8 @@ global_costmap:
       scan: {topic: /scan_reliable, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
     inflation_layer:
       plugin: "nav2_costmap_2d::InflationLayer"
-      cost_scaling_factor: 3.0
-      inflation_radius: 0.35
+      cost_scaling_factor: 15.0
+      inflation_radius: 0.01
 
 # AMCL parameters
 amcl:
