@@ -15,7 +15,7 @@ def generate_launch_description():
     go2_localization_dir = get_package_share_directory('go2_localization')
 
     # --- DEFINE FILE PATHS ---
-    map_file = os.path.join(go2_navigation_dir, 'maps', 'map_six.yaml')
+    map_file = os.path.join(go2_navigation_dir, 'maps', 'map_seven.yaml')
     nav2_params_file = os.path.join(go2_navigation_dir, 'config', 'nav2_params.yaml')
     rviz_config_file = os.path.join(nav2_bringup_dir, 'rviz', 'nav2_default_view.rviz')
     livox_config_file = os.path.join(livox_ros_driver2_dir, 'config', 'MID360_config.json')

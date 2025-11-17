@@ -44,11 +44,11 @@ def generate_launch_description():
         output='screen'
     )
 
-    ekf_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(go2_localization_dir, 'launch', 'ekf.launch.py')
-        )
-    )
+    #ekf_launch = IncludeLaunchDescription(
+    #    PythonLaunchDescriptionSource(
+    #        os.path.join(go2_localization_dir, 'launch', 'ekf.launch.py')
+    #    )
+    #)
 
     # Terminal 2: Livox LiDAR Driver
     livox_driver = Node(
@@ -129,7 +129,7 @@ def generate_launch_description():
     # --- Launch Description ---
     return LaunchDescription([
         odom_bridge,
-        ekf_launch,
+        #ekf_launch,
         livox_driver,
         pointcloud_to_laserscan,
         scan_qos_relay,

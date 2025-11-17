@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>odom_test</name>
+  <version>0.0.1</version>
+  <description>Standalone odometry tester for Go2</description>
+  <maintainer email="you@example.com">You</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2</depend>               <!-- NEW -->
+  <depend>unitree_go</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
