@@ -35,18 +35,18 @@ def generate_launch_description():
 
     # inside navigation.launch.py, right after go2_driver_launch
     odom_bridge = Node(
-        package='go2_odometry_nav',
-        executable='go2_odom_nav_node',
+        package='go2_odometry_bridge',
+        executable='go2_odometry_bridge_node',
         name='odom_bridge_node',
         output='screen'
     )
 
-    # 2. EKF Launch (fuses go2_driver's /odom + IMU)
-    ekf_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(go2_localization_dir, 'launch', 'ekf.launch.py')
-        )
-    )
+    # # 2. EKF Launch (fuses go2_driver's /odom + IMU)
+    # ekf_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(go2_localization_dir, 'launch', 'ekf.launch.py')
+    #     )
+    # )
 
     # 3. Livox LiDAR Driver (MID-360)
     livox_driver = Node(
@@ -71,7 +71,7 @@ def generate_launch_description():
         executable='pointcloud_to_laserscan_node',
         name='pointcloud_to_laserscan_go2',
         remappings=[
-            ('cloud_in', '/pointcloud'),   # <-- FROM go2_driver
+            ('cloud_in', '/livox/lidar'),   # <-- CHANGE
             ('scan', '/scan')
         ],
         parameters=[{
@@ -96,7 +96,11 @@ def generate_launch_description():
         package='scan_qos_relay',
         executable='scan_qos_relay',
         name='scan_qos_relay',
-        output='screen'
+        output='screen',
+        remappings=[
+            ('scan_in', '/scan'),           # ← ADD THIS LINE
+            ('scan_out', '/scan_reliable')  # ← ADD THIS LINE
+        ]
     )
 
     # 6. STATIC TRANSFORMS
@@ -149,7 +153,7 @@ def generate_launch_description():
         odom_bridge,
 
         # 2. Localization
-        ekf_launch,
+        #ekf_launch,
 
         # 3. Sensors
         livox_driver,

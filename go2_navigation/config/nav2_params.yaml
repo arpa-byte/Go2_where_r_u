@@ -64,7 +64,7 @@ bt_navigator:
     use_sim_time: false
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: /odometry/filtered
+    odom_topic: /odom
 
 # Local Costmap parameters
 local_costmap:
@@ -86,11 +86,11 @@ local_costmap:
       plugin: "nav2_costmap_2d::ObstacleLayer"
       enabled: true
       observation_sources: scan
-      scan: {topic: /scan_reliable, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
+      scan: {topic: /scan, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
     inflation_layer:
       plugin: "nav2_costmap_2d::InflationLayer"
-      cost_scaling_factor: 15.0     # ← SHARPER drop-off
-      inflation_radius: 0.01
+      cost_scaling_factor: 5.0     # ← SHARPER drop-off
+      inflation_radius: 0.35      # ← REDUCED inflation radius for local costmap
 
 # Global Costmap parameters
 global_costmap:
@@ -110,11 +110,11 @@ global_costmap:
       plugin: "nav2_costmap_2d::ObstacleLayer"
       enabled: true
       observation_sources: scan
-      scan: {topic: /scan_reliable, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
+      scan: {topic: /scan, max_obstacle_height: 2.0, clearing: true, marking: true, data_type: LaserScan}
     inflation_layer:
       plugin: "nav2_costmap_2d::InflationLayer"
-      cost_scaling_factor: 15.0
-      inflation_radius: 0.01
+      cost_scaling_factor: 5.0
+      inflation_radius: 0.35      # ← REDUCED inflation radius for global costmap
 
 # AMCL parameters
 amcl:
